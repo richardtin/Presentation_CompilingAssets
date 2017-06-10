@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+		<title>Compiling Assets (Laravel Elixir)</title>
 
 		<link rel="stylesheet" href="css/reveal.css">
 		<link rel="stylesheet" href="css/theme/black.css">
@@ -24,8 +24,397 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+				<section>
+					<h1>Laravel Elixir</h1>
+					<h3>A tool for compiling front-end assets</h3>
+					<br>
+					<p>
+						<small>Richard Ting</small><br>
+						<small>2017-05-17</small><br>
+					</p>
+				</section>
+				<section>
+					<h2>Outline</h2>
+					<ul>
+						<li>Background</li>
+						<li>Installation &amp; Setup</li>
+						<li>Running Elixir</li>
+						<li>Working With CSS &amp; JavaScript</li>
+						<li>Versioning / Cache Busting</li>
+						<li>References</li>
+						<li>DEMO</li>
+					</ul>
+				</section>
+				<section>
+					<h1>Background</h1>
+				</section>
+				<section>
+					<h2>What we need?</h2>
+					<ul>
+						<li>客製化 3rd-party 套件, 如: Bootstrap + customized style</li>
+						<li>編譯 ES2015 (ES6) Javascript</li>
+						<li>合併 CSS / JavaScript</li>
+						<li>版本號 / 緩存刷新</li>
+						<li>語法 &amp; 縮排 &amp; ... 檢查 (Lint)</li>
+						<li>單元測試 (Unit test)</li>
+						<li>...</li>
+					</ul>
+				</section>
+				<section>
+					<h1>有工具可以幫我們自動化嗎？</h1>
+				</section>
+				<section>
+					<h2>自動化工具</h2>
+					<table>
+						<tbody>
+							<tr>
+								<td>Grunt (Ex: Bootstrap)</td>
+								<td>
+									<pre><code class="bash" data-trim>
+$ npm install -g grunt-cli
+$ cd bootstrap/
+$ npm install
+$ grunt dist (Just compile CSS and JavaScript)
+									</code></pre>
+								</td>
+							</tr>
+							<tr>
+								<td>Gulp (Ex: FullCalendar)</td>
+								<td>
+									<pre><code class="bash" data-trim>
+$ npm install -g gulp-cli
+$ cd fullcalendar/
+$ npm install
+$ gulp (Just compile CSS and JavaScript)
+									</code></pre>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</section>
+				<section>
+					<h1>DEMO</h1>
+				</section>
+				<section>
+					<h2>Gulp 簡介</h2>
+					<ul>
+						<li>使用 JavaScript 撰寫任務排程, Ex:</li>
+					</ul>
+					<pre><code class="hljs" data-trim>
+var gulp = require('gulp');
+var less = require('gulp-less');
+var minifyCSS = require('gulp-csso');
+
+gulp.task('css', function(){
+  return gulp.src('client/templates/*.less')
+    .pipe(less())
+    .pipe(minifyCSS())
+    .pipe(gulp.dest('build/css'))
+});
+
+gulp.task('default', [ 'css' ]);
+					</code></pre>
+				</section>
+				<section>
+					<h2>Laravel Elixir 是什麼？</h2>
+					<ul>
+						<li>提供 Laravel Application 基本的 Gulp 任務</li>
+					</ul>
+					<pre><code class="hljs" data-trim>
+elixir(function(mix) {
+  mix.sass('app.scss')
+    .webpack('app.js');
+});
+					</code></pre>
+				</section>
+				<section>
+					<h1>Installation &amp; Setup</h1>
+				</section>
+				<section>
+					<h2>Installation &amp; Setup</h2>
+					<table>
+						<tbody>
+							<tr>
+								<td>
+									<ul>
+										<li>Installing Node</li>
+										<ul>
+											<li>Verify commands</li>
+										</ul>
+									</ul>
+								</td>
+								<td>
+									<pre><code class="bash" data-trim>
+$ node -v
+$ npm -v
+									</code></pre>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<ul>
+										<li>Installing Gulp</li>
+									</ul>
+								</td>
+								<td>
+									<pre><code class="bash" data-trim>
+$ npm install -g gulp-cli
+									</code></pre>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<ul>
+										<li>Installing Laravel Elixir</li>
+									</ul>
+								</td>
+								<td>
+									<pre><code class="bash" data-trim>
+$ npm install
+									</code></pre>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</section>
+				<section>
+					<h1>Running Elixir</h1>
+				</section>
+				<section>
+					<h2>Running Elixir</h2>
+					<pre><code class="bash" data-trim>
+// Run all tasks...
+$ gulp
+
+// Run all tasks and minify all CSS and JavaScript...
+$ gulp --production
+					</code></pre>
+				</section>
+				<section>
+					<h1>Working with CSS &amp; JavaScript</h1>
+				</section>
+				<section>
+					<h3>Working with CSS &amp; JavaScript (1)</h3>
+					<table>
+						<tbody>
+							<tr>
+								<td>
+									<ul>
+										<li>Less / Sass / Stylus, Ex:</li>
+										<pre><code class="hljs" data-trim>
+elixir(function(mix) {
+  mix.less('app.less');
+});
+										</code></pre>
+										<li>Default output: <code>public/css/app.css</code></li>
+									</ul>
+								</td>
+								<td>
+									<ul>
+										<li>Webpack / Rollup, Ex:</li>
+										<pre><code class="hljs" data-trim>
+elixir(function(mix) {
+  mix.webpack('app.js');
+});
+										</code></pre>
+										<li>Default output: <code>public/js/app.js</code></li>
+									</ul>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</section>
+				<section>
+					<h3>Working with CSS &amp; JavaScript (2)</h3>
+					<table>
+						<tbody>
+							<tr>
+								<td>
+									<ul>
+										<li>Less / Sass / Stylus, Ex:</li>
+										<pre><code class="hljs" data-trim>
+elixir(function(mix) {
+  mix.less([
+    'app.less',
+    'controllers.less'
+  ]);
+});
+										</code></pre>
+										<li>Default output: <code>public/css/all.css</code></li>
+									</ul>
+								</td>
+								<td>
+									<ul>
+										<li>Webpack / Rollup, Ex:</li>
+										<pre><code class="hljs" data-trim>
+elixir(function(mix) {
+  mix.scripts([
+    'app.js',
+    'controllers.js'
+  ]);
+});
+										</code></pre>
+										<li>Default output: <code>public/js/all.js</code></li>
+									</ul>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</section>
+				<section>
+					<h3>Working with CSS &amp; JavaScript (3)</h3>
+					<table>
+						<tbody>
+							<tr>
+								<td>
+									<ul>
+										<li>Less / Sass / Stylus, Ex:</li>
+										<pre><code class="hljs" data-trim>
+elixir(function(mix) {
+  mix.less(
+    'app.less',
+    'public/stylesheets'
+  );
+});
+										</code></pre>
+									</ul>
+								</td>
+								<td>
+									<ul>
+										<li>Webpack / Rollup, Ex:</li>
+										<pre><code class="hljs" data-trim>
+elixir(function(mix) {
+  mix.webpack(
+    './app/assets/js/app.js',
+    './public/dist/customized.js'
+  );
+});
+										</code></pre>
+									</ul>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</section>
+				<section>
+					<h3>Working with CSS &amp; JavaScript (4)</h3>
+					<ul>
+						<p>Method chaining</p>
+						<pre><code class="hljs">
+elixir(function(mix) {
+  mix.less('app.less')
+     .webpack('app.js');
+});
+						</code></pre>
+						<pre><code class="hljs">
+elixir(function(mix) {
+  mix.sass('calculator.scss')
+     .version(['css/calculator.css']);
+});
+						</code></pre>
+					</ul>
+				</section>
+				<section>
+					<h1>Version / Cache Busting</h1>
+				</section>
+				<section>
+					<h2>Version / Cache Busting (1)</h2>
+					<ul>
+						<li>Single file</li>
+						<pre><code class="hljs" data-trim>
+elixir(function(mix) {
+  mix.version(['css/all.css']);
+});
+						</code></pre>
+						<li>How to link versioned file?</li>
+						<pre><code class="html" data-trim>
+<link rel="stylesheet" href="{{ elixir('css/all.css') }}">
+						</code></pre>
+					</ul>
+				</section>
+				<section>
+					<h2>Version / Cache Busting (2)</h2>
+					<ul>
+						<li>Multiple files</li>
+						<pre><code class="hljs" data-trim>
+elixir(function(mix) {
+  mix.version(['css/all.css', 'js/app.js']);
+});
+						</code></pre>
+						<li>How to link versioned files?</li>
+						<pre><code class="html" data-trim>
+<link rel="stylesheet" href="{{ elixir('css/all.css') }}">
+
+<script src="{{ elixir('js/app.js') }}"></script>
+						</code></pre>
+					</ul>
+				</section>
+				<section>
+					<h1>References</h1>
+				</section>
+				<section>
+					<h2>References</h2>
+					<ul>
+						<li><a href="https://laravel.com/docs/5.3/elixir">Laravel Elixir</a> (5.3)</li>
+						<li><a href="https://kejyuntw.gitbooks.io/gulp-learning-notes/">gulp 學習筆記</a></li>
+						<li><a href="https://laravel.com/docs/5.4/mix">Laravel Mix</a> (5.4)</li>
+					</ul>
+				</section>
+				<section>
+					<h1>DEMO</h1>
+				</section>
+				<section>
+					<h1>What's new in 5.4?</h1>
+				</section>
+				<section>
+					<h2>Laravel Elixir VS. Laravel Mix</h2>
+					<table>
+						<tbody>
+							<tr>
+								<td style="font-size: 0.8em;">
+									<ul>
+										<p>Laravel 5.0 ~ 5.3</p>
+										<li>Laravel Elixir</li>
+										<ul>
+											<li>Gulp</li>
+											<li>Running command:</li>
+										</ul>
+									</ul>
+									<pre><code class="bash" data-trim>
+// Run all tasks...
+gulp
+
+// Run all tasks and minify all output...
+gulp --production
+
+// Watching assets for changes
+gulp watch
+									</code></pre>
+								</td>
+								<td style="font-size: 0.8em;">
+									<ul>
+										<p>Laravel 5.4</p>
+										<li>Laravel Mix</li>
+										<ul>
+											<li>Webpack</li>
+											<li>Running command:</li>
+										</ul>
+									</ul>
+									<pre><code class="bash" data-trim>
+// Run all Mix tasks...
+npm run dev
+
+// Run all Mix tasks and minify output...
+npm run production
+
+// Watching assets for changes
+npm run watch
+									</code></pre>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</section>
 			</div>
 		</div>
 
